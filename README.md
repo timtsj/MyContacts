@@ -1,2 +1,2 @@
-# MyContacts
- Simple contacts app
+# My-Contacts-App
+Simple contacts app

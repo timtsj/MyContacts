@@ -1,0 +1,96 @@
+/*
+ * Copyright 2019 TSDream Developer
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "com.tsdreamdeveloper.mycontacts"
+        minSdkVersion 19
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
+    }
+}
+
+def retrofit = '2.6.0'
+def rxjava = '2.2.10'
+def rxandroid = '2.1.1'
+def dagger = '2.14.1'
+def moxy = '1.5.3'
+def gson = '2.8.5'
+def support = '28.0.0'
+def butterKnife = '9.0.0'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    //Test
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    //Android support lib
+    implementation "com.android.support:appcompat-v7:$support"
+    implementation "com.android.support:support-v4:$support"
+    implementation "com.android.support:recyclerview-v7:$support"
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+
+    //Moxy for MVP
+    implementation "com.arello-mobile:moxy:$moxy"
+    implementation "com.arello-mobile:moxy-android:$moxy"
+    implementation "com.arello-mobile:moxy-app-compat:$moxy"
+    annotationProcessor "com.arello-mobile:moxy-compiler:$moxy"
+
+    //Dagger
+    implementation "com.google.dagger:dagger:$dagger"
+    implementation "com.google.dagger:dagger-android-support:$dagger"
+    annotationProcessor "com.google.dagger:dagger-compiler:$dagger"
+    annotationProcessor "com.google.dagger:dagger-android-processor:$dagger"
+
+    //RxJava2
+    implementation "io.reactivex.rxjava2:rxjava:$rxjava"
+    implementation "io.reactivex.rxjava2:rxandroid:$rxandroid"
+
+    //GSON
+    implementation "com.google.code.gson:gson:$gson"
+
+    //Retrofit
+    implementation "com.squareup.retrofit2:retrofit:$retrofit"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofit"
+
+    //OkHttp
+    implementation 'com.squareup.okhttp3:okhttp:3.12.0'
+    implementation 'com.squareup.okhttp3:okhttp-urlconnection:3.10.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.9.0'
+
+    //ButterKnife
+    implementation "com.jakewharton:butterknife:$butterKnife"
+    annotationProcessor "com.jakewharton:butterknife-compiler:$butterKnife"
+}
