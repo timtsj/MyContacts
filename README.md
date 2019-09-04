@@ -13,7 +13,6 @@ A simple contacts app, used api from https://www.json-generator.com/
 
 ```
 - Moxy
-- ButterKnife
 - Dagger2
 - RxJava2
 - GSON
