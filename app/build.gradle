@@ -37,6 +37,9 @@ android {
         sourceCompatibility = '1.8'
         targetCompatibility = '1.8'
     }
+    dataBinding {
+        enabled = true
+    }
 }
 
 def retrofit = '2.6.0'
@@ -46,7 +49,6 @@ def dagger = '2.14.1'
 def moxy = '1.5.3'
 def gson = '2.8.5'
 def support = '28.0.0'
-def butterKnife = '9.0.0'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -90,8 +92,4 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.12.0'
     implementation 'com.squareup.okhttp3:okhttp-urlconnection:3.10.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.9.0'
-
-    //ButterKnife
-    implementation "com.jakewharton:butterknife:$butterKnife"
-    annotationProcessor "com.jakewharton:butterknife-compiler:$butterKnife"
 }

@@ -99,11 +99,9 @@ public class MainPresenter extends BasePresenter<MainView> {
 
     /**
      * Pass new query text to observable
-     *
-     * @param text new query text
      */
-    public void onNext(String text) {
-        publishSubject.onNext(text);
+    public void onNext(CharSequence s, int start, int before, int count) {
+        publishSubject.onNext(s.toString());
     }
 
     /**
@@ -113,7 +111,7 @@ public class MainPresenter extends BasePresenter<MainView> {
         // Set up the query listener that executes the search
         Disposable disposable =
                 getSubject()
-                        .debounce(2000, TimeUnit.MILLISECONDS)
+                        .debounce(2, TimeUnit.SECONDS)
                         .distinctUntilChanged()
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())

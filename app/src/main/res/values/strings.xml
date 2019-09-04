@@ -17,4 +17,5 @@
 <resources>
     <string name="app_name">My Contacts TEST app</string>
     <string name="loading_text">Loading. Please wait…</string>
+    <string name="enter_contact_name_or_phone">Enter contact name or phone</string>
 </resources>

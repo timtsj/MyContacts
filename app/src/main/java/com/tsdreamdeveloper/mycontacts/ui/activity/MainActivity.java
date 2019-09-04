@@ -16,16 +16,17 @@
 
 package com.tsdreamdeveloper.mycontacts.ui.activity;
 
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
+import android.widget.TextView;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.tsdreamdeveloper.mycontacts.R;
+import com.tsdreamdeveloper.mycontacts.databinding.ActivityMainBinding;
 import com.tsdreamdeveloper.mycontacts.mvp.model.Contact;
 import com.tsdreamdeveloper.mycontacts.mvp.presenter.MainPresenter;
 import com.tsdreamdeveloper.mycontacts.mvp.view.MainView;
@@ -33,10 +34,6 @@ import com.tsdreamdeveloper.mycontacts.ui.adapter.ContactAdapter;
 
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnEditorAction;
-import butterknife.OnTextChanged;
 import io.reactivex.plugins.RxJavaPlugins;
 
 /**
@@ -44,26 +41,22 @@ import io.reactivex.plugins.RxJavaPlugins;
  * @since 09.03.2019
  */
 
-public class MainActivity extends BaseActivity implements MainView {
+public class MainActivity extends BaseActivity implements MainView, TextView.OnEditorActionListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
     @InjectPresenter
     MainPresenter presenter;
 
-    @BindView(R.id.recycler_view)
-    RecyclerView recyclerView;
-
-    @BindView(R.id.et_search)
-    EditText etSearch;
-
     private ContactAdapter adapter;
+    private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        binding.setPresenter(presenter);
+        binding.etSearch.setOnEditorActionListener(this);
         RxJavaPlugins.setErrorHandler(throwable -> {
             Log.e(TAG, "onCreate: " + throwable.getMessage());
         });
@@ -77,9 +70,9 @@ public class MainActivity extends BaseActivity implements MainView {
      * Implement RecyclerView and Adapter
      */
     private void initRecyclerView() {
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ContactAdapter();
-        recyclerView.setAdapter(adapter);
+        binding.recyclerView.setAdapter(adapter);
     }
 
     /**
@@ -94,32 +87,6 @@ public class MainActivity extends BaseActivity implements MainView {
         if (!presenter.isMoreThanTwoHour()) {
             adapter.setFilteredItems(presenter.getFilteredList());
         }
-    }
-
-    /**
-     * TextWatcher for search edit query
-     *
-     * @param query changed query
-     */
-    @OnTextChanged(R.id.et_search)
-    public void onTextChanged(CharSequence query) {
-        presenter.onNext(query.toString());
-    }
-
-    /**
-     * Edit text listener for done action
-     *
-     * @param actionId The code of the action being performed.
-     * @param event    Object used to report key and button events.
-     * @return true if action pressed
-     */
-    @OnEditorAction(R.id.et_search)
-    public boolean onEditorAction(int actionId, KeyEvent event) {
-        if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
-            textChanged(etSearch.getText().toString().trim());
-            return true;
-        }
-        return false;
     }
 
     /**
@@ -139,5 +106,22 @@ public class MainActivity extends BaseActivity implements MainView {
     protected void onStop() {
         super.onStop();
         presenter.saveFilteredList(adapter.getFilteredItems());
+    }
+
+    /**
+     * Edit text listener for done action
+     *
+     * @param actionId The code of the action being performed.
+     * @param event    Object used to report key and button events.
+     * @return true if action pressed
+     */
+    @Override
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        if (v.getId() == R.id.et_search && ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE))) {
+            String query = binding.etSearch.getText().toString().trim();
+            textChanged(query);
+            return true;
+        }
+        return false;
     }
 }
