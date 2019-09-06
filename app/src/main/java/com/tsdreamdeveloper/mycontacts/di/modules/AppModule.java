@@ -28,7 +28,7 @@ import dagger.Provides;
  */
 
 @Module(includes = {ApiModule.class})
-public class ContactsModule {
+public class AppModule {
     @Provides
     public NetworkService provideService(Api api) {
         return new NetworkService(api);

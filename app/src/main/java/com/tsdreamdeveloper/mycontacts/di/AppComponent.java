@@ -19,7 +19,7 @@ package com.tsdreamdeveloper.mycontacts.di;
 import android.content.Context;
 
 import com.tsdreamdeveloper.mycontacts.api.NetworkService;
-import com.tsdreamdeveloper.mycontacts.di.modules.ContactsModule;
+import com.tsdreamdeveloper.mycontacts.di.modules.AppModule;
 import com.tsdreamdeveloper.mycontacts.di.modules.ContextModule;
 import com.tsdreamdeveloper.mycontacts.di.modules.SharedPrefsHelper;
 import com.tsdreamdeveloper.mycontacts.di.modules.SharedPrefsModule;
@@ -35,7 +35,7 @@ import dagger.Component;
  */
 
 @Singleton
-@Component(modules = {ContextModule.class, ContactsModule.class, SharedPrefsModule.class})
+@Component(modules = {ContextModule.class, AppModule.class, SharedPrefsModule.class})
 public interface AppComponent {
     Context getContext();
 

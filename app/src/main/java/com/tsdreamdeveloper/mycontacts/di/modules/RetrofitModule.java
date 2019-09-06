@@ -18,7 +18,6 @@ package com.tsdreamdeveloper.mycontacts.di.modules;
 
 import android.app.Application;
 import android.content.Context;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -32,19 +31,13 @@ import java.util.concurrent.TimeUnit;
 import dagger.Module;
 import dagger.Provides;
 import io.reactivex.Observable;
-import okhttp3.Credentials;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-
-import static com.tsdreamdeveloper.mycontacts.common.Utils.AUTHORIZATION_HEADER;
-import static com.tsdreamdeveloper.mycontacts.common.Utils.BEARER;
-import static com.tsdreamdeveloper.mycontacts.di.modules.SharedPrefsHelper.PREFS_CURRENT_USER;
 
 /**
  * @author Timur Seisembayev
@@ -65,28 +58,20 @@ public class RetrofitModule {
     }
 
     @Provides
-    public Retrofit provideRetrofit() {
-        OkHttpClient httpClient = provideHttpClient();
-        Gson gson = provideGson();
-
+    public Retrofit provideRetrofit(OkHttpClient httpClient, Converter.Factory gsonConverterFactory, RxJava2CallAdapterFactory rxJava2CallAdapterFactory) {
         if (retrofit == null) {
-            Converter.Factory gsonConverterFactory = GsonConverterFactory.create(gson);
             retrofit = new Retrofit.Builder()
                     .baseUrl(mHttpUrlBasement)
                     .client(httpClient)
                     .addConverterFactory(gsonConverterFactory)
-                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                    .addCallAdapterFactory(rxJava2CallAdapterFactory)
                     .build();
         }
         return retrofit;
     }
 
     @Provides
-    public OkHttpClient provideHttpClient() {
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        // set your desired log level
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-
+    public OkHttpClient provideHttpClient(HttpLoggingInterceptor logging) {
         OkHttpClient.Builder client;
         // provideInterceptorIsConnected checked is network available
         client = new OkHttpClient.Builder()
@@ -108,12 +93,27 @@ public class RetrofitModule {
         return new ConnectivityInterceptor(rxNetworkMonitor);
     }
 
-
     @Provides
     public Gson provideGson() {
         return new GsonBuilder()
                 .setLenient()
                 .excludeFieldsWithoutExposeAnnotation()
                 .create();
+    }
+
+    @Provides
+    public Converter.Factory provideGsonConverterFactory(Gson gson) {
+        return GsonConverterFactory.create(gson);
+    }
+
+    @Provides
+    public HttpLoggingInterceptor provideHttpLoggingInterceptor() {
+        // set your desired log level
+        return new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY);
+    }
+
+    @Provides
+    public RxJava2CallAdapterFactory provideRxJava2CallAdapterFactory() {
+        return RxJava2CallAdapterFactory.create();
     }
 }

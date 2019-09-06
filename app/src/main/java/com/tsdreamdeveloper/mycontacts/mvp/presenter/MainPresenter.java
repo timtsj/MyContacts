@@ -26,6 +26,7 @@ import com.tsdreamdeveloper.mycontacts.di.modules.SharedPrefsHelper;
 import com.tsdreamdeveloper.mycontacts.mvp.model.Contact;
 import com.tsdreamdeveloper.mycontacts.mvp.view.MainView;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -45,7 +46,8 @@ import io.reactivex.subjects.PublishSubject;
 @InjectViewState
 public class MainPresenter extends BasePresenter<MainView> {
 
-    private final static String TAG = MainPresenter.class.getSimpleName();
+    private static final String TAG = MainPresenter.class.getSimpleName();
+    private static final int TWO_HOUR = 120 * 60 * 1000;
 
     @Inject
     NetworkService networkService;
@@ -58,12 +60,14 @@ public class MainPresenter extends BasePresenter<MainView> {
     public MainPresenter() {
         App.getAppComponent().inject(this);
         publishSubject = PublishSubject.create();
+        getContacts();
+        onTextChanged();
     }
 
     /**
      * Fun for get contacts from api
      */
-    public void getContacts() {
+    private void getContacts() {
         getViewState().onLoadingStart();
         Disposable subscription = networkService
                 .getUsers()
@@ -72,7 +76,7 @@ public class MainPresenter extends BasePresenter<MainView> {
                     result(success);
                 }, throwable -> {
                     getViewState().onLoadingFinish();
-                    Log.e(TAG, "getContacts: " + throwable.getMessage());
+                    Log.e(TAG, "getContacts: ", throwable);
                     getViewState().showMessage("Error");
                 });
         unsubscribeOnDestroy(subscription);
@@ -107,7 +111,7 @@ public class MainPresenter extends BasePresenter<MainView> {
     /**
      * Fun for subscribe to observable and if text changed pass it to adapter
      */
-    public void onTextChanged() {
+    private void onTextChanged() {
         // Set up the query listener that executes the search
         Disposable disposable =
                 getSubject()
@@ -120,7 +124,7 @@ public class MainPresenter extends BasePresenter<MainView> {
                                 text ->
                                         getViewState().textChanged(text),
                                 throwable -> {
-                                    Log.e(MainPresenter.class.getSimpleName(), "onTextChanged: " + throwable.getMessage());
+                                    Log.e(TAG, "onTextChanged: ", throwable);
                                 });
         unsubscribeOnDestroy(disposable);
     }
@@ -141,7 +145,7 @@ public class MainPresenter extends BasePresenter<MainView> {
      * @return filtered contacts list
      */
     public List<Contact> getFilteredList() {
-        return sharedPrefsHelper.getContact();
+        return isMoreThanTwoHour() ? new ArrayList<>() : sharedPrefsHelper.getContact();
     }
 
     /**
@@ -149,8 +153,8 @@ public class MainPresenter extends BasePresenter<MainView> {
      *
      * @return true if activity opened more than 2 hour
      */
-    public boolean isMoreThanTwoHour() {
+    private boolean isMoreThanTwoHour() {
         long lastTime = sharedPrefsHelper.getLastTime();
-        return System.currentTimeMillis() - lastTime >= 120 * 60 * 1000;
+        return System.currentTimeMillis() - lastTime >= TWO_HOUR;
     }
 }

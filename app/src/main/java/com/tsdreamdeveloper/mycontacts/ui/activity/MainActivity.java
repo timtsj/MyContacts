@@ -60,10 +60,7 @@ public class MainActivity extends BaseActivity implements MainView, TextView.OnE
         RxJavaPlugins.setErrorHandler(throwable -> {
             Log.e(TAG, "onCreate: " + throwable.getMessage());
         });
-        //Get contacts from api
-        presenter.getContacts();
         initRecyclerView();
-        presenter.onTextChanged();
     }
 
     /**
@@ -82,11 +79,9 @@ public class MainActivity extends BaseActivity implements MainView, TextView.OnE
      */
     @Override
     public void addList(List<Contact> contacts) {
+        adapter.setFilteredItems(presenter.getFilteredList());
         adapter.clearItems();
         adapter.setItems(contacts);
-        if (!presenter.isMoreThanTwoHour()) {
-            adapter.setFilteredItems(presenter.getFilteredList());
-        }
     }
 
     /**

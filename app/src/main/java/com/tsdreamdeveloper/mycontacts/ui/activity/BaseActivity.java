@@ -29,7 +29,7 @@ import com.tsdreamdeveloper.mycontacts.mvp.view.BaseView;
  */
 
 public class BaseActivity extends MvpAppCompatActivity implements BaseView {
-    public static final String NEGATIVE_BUTTON_TEXT = "Ok";
+    private static final String NEGATIVE_BUTTON_TEXT = "Ok";
     private ProgressDialog mDialog;
 
     @Override
@@ -57,7 +57,6 @@ public class BaseActivity extends MvpAppCompatActivity implements BaseView {
 
     @Override
     public void onLoadingStart() {
-        mDialog = ProgressDialog.show(this, "",
-                getString(R.string.loading_text), true);
+        mDialog = ProgressDialog.show(this, "", getString(R.string.loading_text), true);
     }
 }
